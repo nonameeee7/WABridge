@@ -10,43 +10,43 @@
   --bg-secondary: #111827;
   --bg-card: #1a2332;
   --bg-card-hover: #1f2937;
-  
+
   --text-primary: #f9fafb;
   --text-secondary: #9ca3af;
   --text-muted: #6b7280;
-  
+
   --accent-primary: #22c55e;
   --accent-secondary: #16a34a;
   --accent-glow: rgba(34, 197, 94, 0.3);
-  
+
   --border-color: #374151;
   --border-light: #1f2937;
-  
+
   /* Gradients */
   --gradient-accent: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   --gradient-card: linear-gradient(180deg, rgba(34, 197, 94, 0.05) 0%, transparent 100%);
   --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 60%);
-  
+
   /* Typography */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   --font-mono: 'SF Mono', Monaco, 'Courier New', monospace;
-  
+
   /* Spacing */
   --section-padding: clamp(3rem, 8vw, 6rem);
   --container-max: 1200px;
   --container-padding: clamp(1rem, 4vw, 2rem);
-  
+
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 30px var(--accent-glow);
-  
+
   /* Border Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -55,7 +55,9 @@
 }
 
 /* Reset & Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -95,15 +97,28 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
-h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
-h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
 
 p {
   color: var(--text-secondary);
@@ -135,9 +150,17 @@ img {
 }
 
 /* Utility Classes */
-.text-center { text-align: center; }
-.text-accent { color: var(--accent-primary); }
-.text-muted { color: var(--text-muted); }
+.text-center {
+  text-align: center;
+}
+
+.text-accent {
+  color: var(--accent-primary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
 
 .section {
   padding: var(--section-padding) 0;
@@ -163,6 +186,7 @@ img {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -170,23 +194,47 @@ img {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .fade-in-up {
@@ -272,7 +320,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  height: 88px;
 }
 
 .logo {
@@ -293,6 +341,44 @@ img {
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
+}
+
+/* Logo Text Styles - Pure CSS, no background issues */
+.logo-text {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  transition: transform var(--transition-fast);
+}
+
+.logo:hover .logo-text {
+  transform: scale(1.05);
+}
+
+.logo-wa {
+  color: var(--accent-primary);
+  font-weight: 900;
+}
+
+.logo-bridge {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.footer-logo {
+  font-size: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 1.75rem;
+  }
+
+  .footer-logo {
+    font-size: 2rem;
+  }
 }
 
 .nav-menu {
@@ -350,10 +436,10 @@ img {
   .nav-toggle {
     display: flex;
   }
-  
+
   .nav-menu {
     position: fixed;
-    top: 72px;
+    top: 88px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -364,19 +450,19 @@ img {
     transform: translateX(100%);
     transition: transform var(--transition-normal);
   }
-  
+
   .nav-menu.active {
     transform: translateX(0);
   }
-  
+
   .nav-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
   }
-  
+
   .nav-toggle.active span:nth-child(2) {
     opacity: 0;
   }
-  
+
   .nav-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -5px);
   }
@@ -387,7 +473,7 @@ img {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 72px;
+  padding-top: 88px;
   background: var(--gradient-hero);
   position: relative;
   overflow: hidden;
@@ -400,7 +486,7 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 80%, rgba(34, 197, 94, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 40%);
   pointer-events: none;
@@ -556,19 +642,19 @@ img {
     grid-template-columns: 1fr;
     text-align: center;
   }
-  
+
   .hero-text {
     order: 1;
   }
-  
+
   .hero-visual {
     order: 0;
   }
-  
+
   .hero-description {
     margin: 0 auto 2rem;
   }
-  
+
   .hero-buttons {
     justify-content: center;
   }
@@ -856,7 +942,7 @@ img {
   .about-content {
     grid-template-columns: 1fr;
   }
-  
+
   .about-stats {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -877,7 +963,7 @@ img {
   margin-bottom: 1rem;
 }
 
-.contact-info > p {
+.contact-info>p {
   margin-bottom: 2rem;
 }
 
@@ -1107,7 +1193,7 @@ img {
   .footer-content {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .footer-brand {
     grid-column: 1 / -1;
   }
@@ -1117,13 +1203,13 @@ img {
   .footer-content {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-bottom {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
   .footer-legal a {
     margin: 0 0.75rem;
   }
@@ -1234,7 +1320,7 @@ img {
     padding: 0.75rem 1.5rem;
     font-size: 0.9375rem;
   }
-  
+
   .section {
     padding: clamp(2rem, 6vw, 4rem) 0;
   }
