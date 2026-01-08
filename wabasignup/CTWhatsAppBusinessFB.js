@@ -14,7 +14,7 @@ jQuery('#connect_now').on('click', function (e) {
         if (response.authResponse) {
             const code = response.authResponse.code;
             const appId = '2704195743293039';
-            const appSecretId = '494585bd885e60111e50ce31dcf2ba7a';
+            const appSecretId = '6a4cd52ef4b49c489b92642cc54de9b8';
 
             var params = {
                 'client_id': appId, //app_id
@@ -24,41 +24,26 @@ jQuery('#connect_now').on('click', function (e) {
 
             $.ajax({
                 type: "POST",
-                url: '/api/exchange-token',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    code: code
-                }),
+                url: 'getDataAfterConnectFB.php',
+                data: params,
                 dataType: 'json',
                 success: function (response) {
-                    console.log('Token exchange response:', response);
+                    //console.log(response);
                     var accessToken = response.access_token;
                     var whatsappBusinessAccountId = response.whatsapp_business_account_id;
-
-                    // Handle phone numbers array
-                    var phoneNumberId = null;
-                    var formattedPhoneNumber = null;
-                    if (response.phone_numbers && response.phone_numbers.length > 0) {
-                        phoneNumberId = response.phone_numbers[0].id;
-                        formattedPhoneNumber = response.phone_numbers[0].formatted_phone_number || response.phone_numbers[0].display_phone_number;
-                    }
+                    var phoneNumberId = response.phone_number_id;
+                    var formattedPhoneNumber = response.formatted_phone_number;
 
                     sendDataToParent({
                         appId: appId,
                         accessToken: accessToken,
                         whatsappBusinessAccountId: whatsappBusinessAccountId,
                         phoneNumberId: phoneNumberId,
-                        formattedPhoneNumber: formattedPhoneNumber,
-                        phoneNumbers: response.phone_numbers || []
+                        formattedPhoneNumber: formattedPhoneNumber
                     });
                     hideLoader();
                     window.close();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Token exchange error:', xhr.responseText);
-                    hideLoader();
-                    alert('Connection failed: ' + (xhr.responseJSON?.error || error));
-                }
+                }//end of success
             });
         } else {
             hideLoader();
