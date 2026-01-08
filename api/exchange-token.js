@@ -57,8 +57,11 @@ export default async function handler(req, res) {
             });
         }
 
+        // Get origin from request for redirect_uri
+        const origin = req.headers.origin || req.headers.referer || 'https://wabridge.vercel.app/';
+
         // Step 1: Exchange code for short-lived access token
-        const shortLivedToken = await exchangeCodeForToken(code);
+        const shortLivedToken = await exchangeCodeForToken(code, origin);
         if (!shortLivedToken) {
             return res.status(400).json({ error: 'Failed to exchange code for access token' });
         }
@@ -101,8 +104,10 @@ export default async function handler(req, res) {
 // HELPER FUNCTIONS
 // ============================================
 
-async function exchangeCodeForToken(code) {
-    const url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}`;
+async function exchangeCodeForToken(code, origin) {
+    // Facebook requires the redirect_uri to match the one used in the OAuth dialog
+    const redirectUri = origin || 'https://wabridge.vercel.app/';
+    const url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
     const response = await fetch(url);
     const data = await response.json();
