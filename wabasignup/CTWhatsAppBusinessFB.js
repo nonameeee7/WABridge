@@ -24,26 +24,41 @@ jQuery('#connect_now').on('click', function (e) {
 
             $.ajax({
                 type: "POST",
-                url: 'getDataAfterConnectFB.php',
-                data: params,
+                url: '/api/exchange-token',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    code: code
+                }),
                 dataType: 'json',
                 success: function (response) {
-                    //console.log(response);
+                    console.log('Token exchange response:', response);
                     var accessToken = response.access_token;
                     var whatsappBusinessAccountId = response.whatsapp_business_account_id;
-                    var phoneNumberId = response.phone_number_id;
-                    var formattedPhoneNumber = response.formatted_phone_number;
+
+                    // Handle phone numbers array
+                    var phoneNumberId = null;
+                    var formattedPhoneNumber = null;
+                    if (response.phone_numbers && response.phone_numbers.length > 0) {
+                        phoneNumberId = response.phone_numbers[0].id;
+                        formattedPhoneNumber = response.phone_numbers[0].formatted_phone_number || response.phone_numbers[0].display_phone_number;
+                    }
 
                     sendDataToParent({
                         appId: appId,
                         accessToken: accessToken,
                         whatsappBusinessAccountId: whatsappBusinessAccountId,
                         phoneNumberId: phoneNumberId,
-                        formattedPhoneNumber: formattedPhoneNumber
+                        formattedPhoneNumber: formattedPhoneNumber,
+                        phoneNumbers: response.phone_numbers || []
                     });
                     hideLoader();
                     window.close();
-                }//end of success
+                },
+                error: function (xhr, status, error) {
+                    console.error('Token exchange error:', xhr.responseText);
+                    hideLoader();
+                    alert('Connection failed: ' + (xhr.responseJSON?.error || error));
+                }
             });
         } else {
             hideLoader();
