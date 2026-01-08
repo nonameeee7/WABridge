@@ -19,8 +19,8 @@ const CONFIG = {
     // Get this from: https://developers.facebook.com/apps/YOUR_APP_ID/whatsapp-business/embedded-signup/
     CONFIG_ID: '879357534817865',
 
-    // Graph API version
-    API_VERSION: 'v21.0',
+    // Graph API version (use v20.0 - latest stable for embedded signup)
+    API_VERSION: 'v20.0',
 
     // Graph API base URL
     API_BASE: 'https://graph.facebook.com'
@@ -41,6 +41,8 @@ let state = {
 // ============================================
 // FACEBOOK SDK INITIALIZATION
 // ============================================
+let fbSDKLoaded = false;
+
 window.fbAsyncInit = function () {
     FB.init({
         appId: CONFIG.APP_ID,
@@ -49,7 +51,8 @@ window.fbAsyncInit = function () {
         version: CONFIG.API_VERSION
     });
 
-    console.log('Facebook SDK initialized');
+    fbSDKLoaded = true;
+    console.log('Facebook SDK initialized with version:', CONFIG.API_VERSION);
 };
 
 // ============================================
@@ -64,6 +67,29 @@ function launchWhatsAppSignup() {
     const btn = document.getElementById('connect-btn');
     btn.classList.add('loading');
     btn.disabled = true;
+
+    // Check if Facebook SDK is loaded
+    if (typeof FB === 'undefined' || !fbSDKLoaded) {
+        showToast('Facebook SDK is loading, please wait...', 'error');
+        resetConnectButton();
+
+        // Retry after 1 second
+        setTimeout(() => {
+            if (typeof FB !== 'undefined') {
+                FB.init({
+                    appId: CONFIG.APP_ID,
+                    cookie: true,
+                    xfbml: true,
+                    version: CONFIG.API_VERSION
+                });
+                fbSDKLoaded = true;
+                launchWhatsAppSignup();
+            } else {
+                showToast('Failed to load Facebook SDK. Please refresh the page.', 'error');
+            }
+        }, 1000);
+        return;
+    }
 
     showStatus('Launching WhatsApp Signup...', 'connecting');
 
