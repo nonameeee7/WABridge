@@ -39,7 +39,7 @@ $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
 });
 
 // ============================================
-// CONNECT BUTTON HANDLER
+// CONNECT BUTTON HANDLER (MANUAL FLOW)
 // ============================================
 $('#connect-btn').on('click', function (e) {
     e.preventDefault();
@@ -48,43 +48,43 @@ $('#connect-btn').on('click', function (e) {
     showLoader();
     hideStatus();
 
-    // Launch Facebook Login
-    FB.login(function (response) {
-        console.log('FB.login response:', response);
+    // Construct the Manual OAuth URL
+    // We MUST use a specific redirect_uri in the manual flow
+    const redirectUri = window.location.href.split('?')[0];
+    const scope = 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management';
 
-        if (response.authResponse) {
-            const code = response.authResponse.code;
+    const authUrl = `https://www.facebook.com/${CONFIG.API_VERSION}/dialog/oauth?` +
+        `client_id=${CONFIG.APP_ID}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&response_type=code` +
+        `&config_id=${CONFIG.CONFIG_ID}` +
+        `&scope=${scope}` +
+        `&state=signup_init`; // State parameter for security/tracking
 
-            if (code) {
-                // Exchange code for access token via backend
-                exchangeCodeForToken(code);
-            } else if (response.authResponse.accessToken) {
-                // Got access token directly (unlikely with response_type: code)
-                handleDirectToken(response.authResponse.accessToken);
-            } else {
-                hideLoader();
-                showStatus('error', 'No authorization code received');
-            }
-        } else {
-            hideLoader();
+    console.log('Redirecting to Facebook OAuth:', authUrl);
 
-            if (response.error) {
-                showStatus('error', 'Login failed: ' + response.error.message);
-            } else {
-                showStatus('error', 'Login was cancelled');
-            }
-        }
-    }, {
-        config_id: CONFIG.CONFIG_ID,
-        response_type: 'code',
-        override_default_response_type: true,
-        scope: 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management',
-        extras: {
-            setup: {},
-            featureType: 'whatsapp_business_app_onboarding',
-            sessionInfoVersion: '3'
-        }
-    });
+    // Redirect the current window to Facebook
+    window.location.href = authUrl;
+});
+
+// Check for Authorization Code on Page Load
+$(document).ready(function () {
+    // Check if we have 'code' in the URL query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const error = urlParams.get('error');
+
+    if (code) {
+        console.log('Authorization code found:', code);
+        // Exchange code for token
+        exchangeCodeForToken(code);
+
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error) {
+        const errorMsg = urlParams.get('error_message') || 'Login failed';
+        showStatus('error', errorMsg);
+    }
 });
 
 // ============================================
@@ -93,12 +93,16 @@ $('#connect-btn').on('click', function (e) {
 function exchangeCodeForToken(code) {
     showStatus('loading', 'Exchanging authorization code...');
 
+    // Use exactly the same redirect_uri as in the OAuth request
+    const redirectUri = window.location.href.split('?')[0];
+
     $.ajax({
         type: 'POST',
         url: CONFIG.TOKEN_EXCHANGE_URL,
         contentType: 'application/json',
         data: JSON.stringify({
-            code: code
+            code: code,
+            redirect_uri: redirectUri
         }),
         dataType: 'json',
         success: function (response) {
