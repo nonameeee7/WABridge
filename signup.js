@@ -25,7 +25,7 @@ jQuery('#connect-btn').on('click', function (e) {
 
             $.ajax({
                 type: "POST",
-                url: '/api/exchange-token',
+                url: '/api/exchange-token.php',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     code: code
