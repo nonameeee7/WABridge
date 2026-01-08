@@ -42,11 +42,18 @@ $appAccessToken = $clientId . '|' . $clientSecret;
 $apiUrl = 'https://graph.facebook.com/v20.0/';
 
 // Step 1: Exchange code for short-lived token
-$accessTokenURL = $apiUrl . 'oauth/access_token?' . http_build_query([
+$tokenParams = [
     'client_id' => $clientId,
     'client_secret' => $clientSecret,
     'code' => $code
-]);
+];
+
+// Add redirect_uri if provided (CRITICAL for FB.login flow sometimes)
+if (isset($input['redirect_uri'])) {
+    $tokenParams['redirect_uri'] = $input['redirect_uri'];
+}
+
+$accessTokenURL = $apiUrl . 'oauth/access_token?' . http_build_query($tokenParams);
 
 $responseAccessToken = executeGetCurl($accessTokenURL);
 if (!isset($responseAccessToken['access_token'])) {

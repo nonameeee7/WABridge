@@ -27,7 +27,9 @@ jQuery('#connect_now').on('click', function (e) {
                 url: '/api/exchange-token.php',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    code: code
+                    code: code,
+                    // When using FB.login, the redirect_uri is the current page URL
+                    redirect_uri: window.location.href.split('#')[0]
                 }),
                 dataType: 'json',
                 success: function (response) {

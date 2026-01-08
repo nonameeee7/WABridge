@@ -28,7 +28,8 @@ jQuery('#connect-btn').on('click', function (e) {
                 url: '/api/exchange-token.php',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    code: code
+                    code: code,
+                    redirect_uri: window.location.href.split('#')[0]
                 }),
                 dataType: 'json',
                 success: function (response) {
