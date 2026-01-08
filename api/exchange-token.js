@@ -33,26 +33,22 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Get the code and redirect_uri from request
+        // Get the code from request
         let code = null;
-        let redirectUri = null;
 
         if (req.body) {
             // Handle JSON body or form-urlencoded
             if (typeof req.body === 'string') {
                 const parsed = JSON.parse(req.body);
                 code = parsed.code;
-                redirectUri = parsed.redirect_uri;
             } else {
                 code = req.body.code;
-                redirectUri = req.body.redirect_uri;
             }
         }
 
         // Also check query params
         if (!code && req.query) {
             code = req.query.code;
-            redirectUri = req.query.redirect_uri;
         }
 
         if (!code) {
@@ -67,7 +63,7 @@ export default async function handler(req, res) {
         }
 
         // Step 1: Exchange code for short-lived access token
-        const shortLivedToken = await exchangeCodeForToken(code, redirectUri);
+        const shortLivedToken = await exchangeCodeForToken(code);
         if (!shortLivedToken) {
             return res.status(400).json({ error: 'Failed to exchange code for access token' });
         }
@@ -110,17 +106,12 @@ export default async function handler(req, res) {
 // HELPER FUNCTIONS
 // ============================================
 
-async function exchangeCodeForToken(code, redirectUri) {
-    // Build URL with optional redirect_uri
-    let url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}`;
-
-    // Add redirect_uri if provided
-    if (redirectUri) {
-        url += `&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    }
+async function exchangeCodeForToken(code) {
+    // Build URL WITHOUT redirect_uri (not needed for Embedded Signup JS SDK flow)
+    const url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}`;
 
     // Debug log (masking secret)
-    console.log('Exchanging code for token with redirect_uri:', redirectUri);
+    console.log('Exchanging code for token...');
     const debugUrl = url.replace(APP_SECRET, 'xxxx');
     console.log('Exchange URL:', debugUrl);
 

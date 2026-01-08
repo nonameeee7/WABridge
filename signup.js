@@ -98,8 +98,7 @@ function exchangeCodeForToken(code) {
         url: CONFIG.TOKEN_EXCHANGE_URL,
         contentType: 'application/json',
         data: JSON.stringify({
-            code: code,
-            redirect_uri: window.location.href.split('#')[0].split('?')[0]
+            code: code
         }),
         dataType: 'json',
         success: function (response) {
