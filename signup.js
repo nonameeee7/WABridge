@@ -53,13 +53,22 @@ $('#connect-btn').on('click', function (e) {
     const redirectUri = 'https://wabridge.vercel.app/';
     const scope = 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management';
 
+    // The 'extras' parameter is CRITICAL to trigger the WhatsApp Onboarding flow (Business/Phone selection)
+    // instead of just a generic login.
+    const extras = JSON.stringify({
+        setup: {},
+        featureType: 'whatsapp_business_app_onboarding',
+        sessionInfoVersion: '3'
+    });
+
     const authUrl = `https://www.facebook.com/${CONFIG.API_VERSION}/dialog/oauth?` +
         `client_id=${CONFIG.APP_ID}` +
         `&redirect_uri=${encodeURIComponent(redirectUri)}` +
         `&response_type=code` +
         `&config_id=${CONFIG.CONFIG_ID}` +
         `&scope=${scope}` +
-        `&state=signup_init`; // State parameter for security/tracking
+        `&extras=${encodeURIComponent(extras)}` + // Added extras param
+        `&state=signup_init`;
 
     console.log('Redirecting to Facebook OAuth:', authUrl);
 
