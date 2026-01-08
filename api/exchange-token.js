@@ -81,11 +81,12 @@ export default async function handler(req, res) {
         }
 
         // Step 4: Get phone numbers from WABA
-        const phoneData = await getPhoneNumbers(accessToken, wabaId);
+        const phoneNumbers = await getPhoneNumbers(accessToken, wabaId);
 
-        // Step 5: Register phone number (if exists)
-        if (phoneData.phoneNumberId) {
-            await registerPhoneNumber(accessToken, phoneData.phoneNumberId);
+        // Step 5: Register the first phone number (if any exist)
+        // Note: Ideally, the user should select which one to register
+        if (phoneNumbers.length > 0) {
+            await registerPhoneNumber(accessToken, phoneNumbers[0].id);
         }
 
         // Step 6: Subscribe to webhooks
@@ -95,8 +96,7 @@ export default async function handler(req, res) {
         return res.status(200).json({
             access_token: accessToken,
             whatsapp_business_account_id: wabaId,
-            phone_number_id: phoneData.phoneNumberId,
-            formatted_phone_number: phoneData.formattedPhoneNumber
+            phone_numbers: phoneNumbers
         });
 
     } catch (error) {
@@ -168,15 +168,15 @@ async function getPhoneNumbers(accessToken, wabaId) {
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.data && data.data[0]) {
-        const phone = data.data[0];
-        return {
-            phoneNumberId: phone.id,
-            formattedPhoneNumber: phone.display_phone_number?.replace(/\D/g, '') || null
-        };
+    if (data.data) {
+        return data.data.map(phone => ({
+            id: phone.id,
+            display_phone_number: phone.display_phone_number,
+            formatted_phone_number: phone.display_phone_number?.replace(/\D/g, '') || null
+        }));
     }
 
-    return { phoneNumberId: null, formattedPhoneNumber: null };
+    return [];
 }
 
 async function registerPhoneNumber(accessToken, phoneNumberId) {

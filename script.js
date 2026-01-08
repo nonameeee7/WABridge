@@ -3,13 +3,99 @@
  * Main JavaScript File
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   initNavigation();
   initSmoothScroll();
   initFadeInOnScroll();
   initFormValidation();
   initHeaderScroll();
+  checkForAuthCode();
 });
+
+// Check for WhatsApp Signup OAuth Code
+function checkForAuthCode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  if (code) {
+    // We are in the popup after Facebook redirect
+    console.log('Authorization code found:', code);
+
+    // Show a processing overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.flexDirection = 'column';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.innerHTML = `
+      <div style="border: 4px solid #f3f3f3; border-top: 4px solid #25D366; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+      <h3 style="margin-top: 20px; color: #333;">Connecting WhatsApp Account...</h3>
+      <p style="color: #666;">Please wait while we finalize the setup.</p>
+    `;
+    document.body.appendChild(overlay);
+
+    // Add keyframes for spinner
+    const style = document.createElement('style');
+    style.innerHTML = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+    document.head.appendChild(style);
+
+    // Call Backend
+    const CONFIG = {
+      TOKEN_EXCHANGE_URL: '/api/exchange-token'
+    };
+
+    // We must use the exact same redirect_uri strictly
+    const redirectUri = 'https://wabridge.vercel.app/';
+
+    fetch(CONFIG.TOKEN_EXCHANGE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: code,
+        redirect_uri: redirectUri
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error);
+
+        // Success! Send data to parent
+        if (window.opener) {
+          window.opener.postMessage({
+            accessToken: data.access_token,
+            whatsappBusinessAccountId: data.whatsapp_business_account_id,
+            phoneNumbers: data.phone_numbers
+          }, '*');
+
+          overlay.innerHTML = `
+                <h3 style="color: #25D366;">Success!</h3>
+                <p>Account connected. Closing window...</p>
+            `;
+
+          setTimeout(() => window.close(), 1500);
+        } else {
+          overlay.innerHTML = '<h3 style="color: #333;">Connected!</h3><p>You can close this window now.</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Exchange error:', error);
+        overlay.innerHTML = `
+            <h3 style="color: #dc3545;">Connection Failed</h3>
+            <p>${error.message || 'Unknown error occurred'}</p>
+            <button onclick="window.close()" style="margin-top: 15px; padding: 10px 20px; background: #333; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+        `;
+      });
+  }
+}
 
 // Navigation Toggle (Mobile)
 function initNavigation() {
@@ -18,14 +104,14 @@ function initNavigation() {
   const navLinks = document.querySelectorAll('.nav-link');
 
   if (navToggle && navMenu) {
-    navToggle.addEventListener('click', function() {
+    navToggle.addEventListener('click', function () {
       navToggle.classList.toggle('active');
       navMenu.classList.toggle('active');
       document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
     });
 
     navLinks.forEach(link => {
-      link.addEventListener('click', function() {
+      link.addEventListener('click', function () {
         navToggle.classList.remove('active');
         navMenu.classList.remove('active');
         document.body.style.overflow = '';
@@ -37,7 +123,7 @@ function initNavigation() {
 // Smooth Scroll
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function(e) {
+    link.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
       if (href === '#') return;
       const target = document.querySelector(href);
@@ -75,7 +161,7 @@ function initFadeInOnScroll() {
 function initHeaderScroll() {
   const header = document.querySelector('.header');
   if (header) {
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
       header.classList.toggle('scrolled', window.pageYOffset > 50);
     });
   }
@@ -104,7 +190,7 @@ function initFormValidation() {
     }
   });
 
-  form.addEventListener('submit', async function(e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
     let valid = true;
     Object.keys(validators).forEach(name => {

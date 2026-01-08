@@ -554,18 +554,39 @@ function launchWhatsAppSignup() {
         if (event.data && event.data.accessToken && event.data.whatsappBusinessAccountId) {
             const data = event.data;
 
-            // Update state
+            // Update state with base credentials
             state.accessToken = data.accessToken;
             state.wabaId = data.whatsappBusinessAccountId;
-            state.phoneNumberId = data.phoneNumberId;
-            state.phoneNumber = data.formattedPhoneNumber;
-            state.connected = true;
 
-            // Update UI
-            updateConnectionUI();
-            saveState();
+            // Handle Phone Numbers
+            if (data.phoneNumbers && data.phoneNumbers.length > 0) {
+                if (data.phoneNumbers.length === 1) {
+                    // Auto-select the only number
+                    const phone = data.phoneNumbers[0];
+                    state.phoneNumberId = phone.id;
+                    state.phoneNumber = phone.formatted_phone_number || phone.display_phone_number;
+                    state.connected = true;
 
-            showToast('Connected successfully!', 'success');
+                    updateConnectionUI();
+                    saveState();
+                    showToast('Connected successfully!', 'success');
+                } else {
+                    // Show selection modal
+                    showPhoneNumberSelectionModal(data.phoneNumbers);
+                }
+            } else {
+                // Fallback for unexpected data structure or no numbers
+                if (data.phoneNumberId) {
+                    state.phoneNumberId = data.phoneNumberId;
+                    state.phoneNumber = data.formattedPhoneNumber;
+                    state.connected = true;
+                    updateConnectionUI();
+                    saveState();
+                    showToast('Connected successfully!', 'success');
+                } else {
+                    showToast('No phone numbers found associated with this account.', 'error');
+                }
+            }
 
             // Remove the listener after success
             window.removeEventListener('message', messageListener);
@@ -898,3 +919,59 @@ function setupEventListeners() {
 
 // Update inbox badge on load
 setTimeout(updateInboxBadge, 100);
+
+// ============================================
+// PHONE NUMBER SELECTION
+// ============================================
+function showPhoneNumberSelectionModal(phoneNumbers) {
+    // Check if modal exists
+    let modal = document.getElementById('phone-selection-modal');
+
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'phone-selection-modal';
+        modal.className = 'modal';
+        document.body.appendChild(modal);
+    }
+
+    window.tempPhoneNumbers = phoneNumbers;
+
+    const listHtml = phoneNumbers.map((p, index) => `
+        <div onclick="selectPhoneNumber(${index})" 
+             style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: background 0.2s;">
+            <div style="font-weight: bold; color: var(--text-primary);">${p.display_phone_number}</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: ${p.id}</div>
+        </div>
+    `).join('');
+
+    modal.innerHTML = `
+        <div class="modal-header">
+            <h2>Select WhatsApp Number</h2>
+        </div>
+        <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+            <p style="margin-bottom: 15px; color: var(--text-secondary);">Multiple numbers found. Select one to connect:</p>
+            ${listHtml}
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+}
+
+function selectPhoneNumber(index) {
+    const phones = window.tempPhoneNumbers;
+    if (phones && phones[index]) {
+        const phone = phones[index];
+        state.phoneNumberId = phone.id;
+        state.phoneNumber = phone.formatted_phone_number || phone.display_phone_number;
+        state.connected = true;
+
+        updateConnectionUI();
+        saveState();
+        showToast('Connected successfully!', 'success');
+
+        // Hide/Remove modal
+        const modal = document.getElementById('phone-selection-modal');
+        if (modal) modal.remove();
+        delete window.tempPhoneNumbers;
+    }
+}
