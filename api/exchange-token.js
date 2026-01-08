@@ -41,18 +41,18 @@ export default async function handler(req, res) {
             if (typeof req.body === 'string') {
                 const parsed = JSON.parse(req.body);
                 code = parsed.code;
-                redirectUri = parsed.redirect_uri;
             } else {
                 code = req.body.code;
-                redirectUri = req.body.redirect_uri;
             }
         }
 
         // Also check query params
         if (!code && req.query) {
             code = req.query.code;
-            redirectUri = req.query.redirect_uri;
         }
+
+        // We MUST use the one configured in Meta App Settings, regardless of what the client sent
+        redirectUri = 'https://wabridge.vercel.app/';
 
         if (!code) {
             return res.status(400).json({ error: 'Missing authorization code' });
