@@ -49,8 +49,8 @@ $('#connect-btn').on('click', function (e) {
     hideStatus();
 
     // Construct the Manual OAuth URL
-    // We MUST use a specific redirect_uri in the manual flow
-    const redirectUri = window.location.href.split('?')[0];
+    // We MUST use the one configured in Meta App Settings
+    const redirectUri = 'https://wabridge.vercel.app/';
     const scope = 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management';
 
     const authUrl = `https://www.facebook.com/${CONFIG.API_VERSION}/dialog/oauth?` +
@@ -94,7 +94,7 @@ function exchangeCodeForToken(code) {
     showStatus('loading', 'Exchanging authorization code...');
 
     // Use exactly the same redirect_uri as in the OAuth request
-    const redirectUri = window.location.href.split('?')[0];
+    const redirectUri = 'https://wabridge.vercel.app/';
 
     $.ajax({
         type: 'POST',
