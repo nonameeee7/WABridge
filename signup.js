@@ -99,7 +99,7 @@ function exchangeCodeForToken(code) {
         contentType: 'application/json',
         data: JSON.stringify({
             code: code,
-            redirect_uri: window.location.origin + '/'
+            redirect_uri: window.location.href.split('#')[0].split('?')[0]
         }),
         dataType: 'json',
         success: function (response) {

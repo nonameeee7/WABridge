@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WABridge CRM - WhatsApp Business Manager</title>
+    <link rel="stylesheet" href="crm.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">WA</span>
+                <span class="logo-text">Bridge</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-view="inbox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Inbox</span>
+                <span class="badge" id="inbox-badge">3</span>
+            </a>
+            <a href="#" class="nav-item" data-view="contacts">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>Contacts</span>
+            </a>
+            <a href="#" class="nav-item" data-view="templates">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <span>Templates</span>
+            </a>
+            <a href="#" class="nav-item" data-view="campaigns">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <span>Campaigns</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-item" data-view="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+                <span>Settings</span>
+            </a>
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot disconnected"></span>
+                <span>Not Connected</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Inbox View -->
+        <div id="inbox-view" class="view active">
+            <div class="view-header">
+                <h1>Inbox</h1>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="refreshInbox()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                    <button class="btn-primary" onclick="openNewChat()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New Chat
+                    </button>
+                </div>
+            </div>
+
+            <div class="inbox-container">
+                <!-- Conversations List -->
+                <div class="conversations-list">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" placeholder="Search conversations..." id="search-conversations">
+                    </div>
+
+                    <div class="conversations" id="conversations-list">
+                        <!-- Conversations will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Chat View -->
+                <div class="chat-view" id="chat-view">
+                    <div class="chat-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64"
+                            height="64">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <h3>Select a conversation</h3>
+                        <p>Choose a conversation from the list to start messaging</p>
+                    </div>
+
+                    <div class="chat-content hidden" id="chat-content">
+                        <div class="chat-header">
+                            <div class="chat-contact-info">
+                                <div class="avatar" id="chat-avatar">JD</div>
+                                <div class="contact-details">
+                                    <h3 id="chat-name">John Doe</h3>
+                                    <span id="chat-phone">+1 234 567 890</span>
+                                </div>
+                            </div>
+                            <div class="chat-actions">
+                                <button class="icon-btn" title="Call">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button class="icon-btn" title="More">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="19" cy="12" r="1"></circle>
+                                        <circle cx="5" cy="12" r="1"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="messages-container" id="messages-container">
+                            <!-- Messages will be loaded here -->
+                        </div>
+
+                        <div class="chat-input-container">
+                            <button class="icon-btn" title="Attach">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                                    </path>
+                                </svg>
+                            </button>
+                            <input type="text" id="message-input" placeholder="Type a message...">
+                            <button class="icon-btn" title="Emoji">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                </svg>
+                            </button>
+                            <button class="btn-send" onclick="sendChatMessage()">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacts View -->
+        <div id="contacts-view" class="view">
+            <div class="view-header">
+                <h1>Contacts</h1>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="importContacts()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Import
+                    </button>
+                    <button class="btn-primary" onclick="openAddContact()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Contact
+                    </button>
+                </div>
+            </div>
+
+            <div class="contacts-container">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" placeholder="Search contacts..." id="search-contacts">
+                </div>
+
+                <div class="contacts-grid" id="contacts-grid">
+                    <!-- Contacts will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates View -->
+        <div id="templates-view" class="view">
+            <div class="view-header">
+                <h1>Message Templates</h1>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="syncTemplates()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Sync from Meta
+                    </button>
+                    <button class="btn-primary" onclick="openCreateTemplate()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Create Template
+                    </button>
+                </div>
+            </div>
+
+            <div class="templates-container" id="templates-container">
+                <!-- Templates will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Campaigns View -->
+        <div id="campaigns-view" class="view">
+            <div class="view-header">
+                <h1>Campaigns</h1>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="openCreateCampaign()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New Campaign
+                    </button>
+                </div>
+            </div>
+
+            <div class="campaigns-container" id="campaigns-container">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64"
+                        height="64">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <h3>No campaigns yet</h3>
+                    <p>Create your first broadcast campaign to reach multiple contacts at once</p>
+                    <button class="btn-primary" onclick="openCreateCampaign()">Create Campaign</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="settings-view" class="view">
+            <div class="view-header">
+                <h1>Settings</h1>
+            </div>
+
+            <div class="settings-container">
+                <!-- Connection Section -->
+                <div class="settings-section">
+                    <h2>WhatsApp Business Account</h2>
+
+                    <div class="setting-card" id="connection-card">
+                        <div class="setting-info">
+                            <h3>Connection Status</h3>
+                            <p id="connection-info">Connect your WhatsApp Business Account to start messaging</p>
+                        </div>
+                        <button class="btn-primary" id="connect-btn" onclick="launchWhatsAppSignup()">
+                            Connect Account
+                        </button>
+                    </div>
+
+                    <div class="account-details hidden" id="account-details">
+                        <div class="detail-item">
+                            <label>WABA ID</label>
+                            <div class="detail-value">
+                                <code id="waba-id">-</code>
+                                <button class="copy-btn" onclick="copyToClipboard('waba-id')">📋</button>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Phone Number ID</label>
+                            <div class="detail-value">
+                                <code id="phone-number-id">-</code>
+                                <button class="copy-btn" onclick="copyToClipboard('phone-number-id')">📋</button>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Phone Number</label>
+                            <div class="detail-value">
+                                <code id="phone-number">-</code>
+                                <button class="copy-btn" onclick="copyToClipboard('phone-number')">📋</button>
+                            </div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Access Token</label>
+                            <div class="detail-value">
+                                <code id="access-token">-</code>
+                                <button class="copy-btn" onclick="copyToClipboard('access-token')">📋</button>
+                            </div>
+                        </div>
+                        <button class="btn-danger" onclick="disconnect()">Disconnect Account</button>
+                    </div>
+                </div>
+
+                <!-- Webhook Section -->
+                <div class="settings-section">
+                    <h2>Webhook Configuration</h2>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <h3>Webhook URL</h3>
+                            <p>Use this URL in your Meta Developer Console</p>
+                        </div>
+                        <div class="webhook-url">
+                            <code id="webhook-url">https://your-server.com/webhook</code>
+                            <button class="copy-btn" onclick="copyToClipboard('webhook-url')">📋</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="settings-section">
+                    <h2>Preferences</h2>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <h3>Notifications</h3>
+                            <p>Receive browser notifications for new messages</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifications-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <h3>Sound Alerts</h3>
+                            <p>Play a sound when new messages arrive</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="sound-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()"></div>
+
+    <!-- New Chat Modal -->
+    <div id="new-chat-modal" class="modal hidden">
+        <div class="modal-header">
+            <h2>New Conversation</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="new-chat-phone" placeholder="+1234567890">
+                <small>Include country code</small>
+            </div>
+            <div class="form-group">
+                <label>Message Type</label>
+                <select id="new-chat-type">
+                    <option value="template">Template Message</option>
+                    <option value="text">Text Message (24h window)</option>
+                </select>
+            </div>
+            <div class="form-group" id="new-chat-template-group">
+                <label>Template</label>
+                <select id="new-chat-template">
+                    <option value="hello_world">hello_world</option>
+                </select>
+            </div>
+            <div class="form-group hidden" id="new-chat-text-group">
+                <label>Message</label>
+                <textarea id="new-chat-message" placeholder="Type your message..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="startNewChat()">Send Message</button>
+        </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div id="add-contact-modal" class="modal hidden">
+        <div class="modal-header">
+            <h2>Add Contact</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="contact-name" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="contact-phone" placeholder="+1234567890">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="contact-email" placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label>Tags</label>
+                <input type="text" id="contact-tags" placeholder="customer, vip">
+                <small>Separate tags with commas</small>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveContact()">Save Contact</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="crm.js"></script>
+</body>
+
+</html>

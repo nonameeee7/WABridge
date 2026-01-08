@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WABridge Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="dark-mode">
+    <!-- Auth Flow -->
+    <div id="auth-flow" class="auth-overlay">
+        <div class="auth-card" id="login-card">
+            <div class="brand">
+                <span class="logo">WA</span>
+                <span class="brand-name">Bridge</span>
+            </div>
+            <h1>Log in to WABridge</h1>
+            <p>Connect your business to the WhatsApp API</p>
+            <button class="fb-btn" onclick="showPermissions()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="20">
+                Continue with Facebook
+            </button>
+        </div>
+
+        <div class="auth-card hidden" id="permission-card">
+            <div class="fb-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="24">
+                <span>Facebook Login</span>
+            </div>
+            <div class="user-identity">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=yash" class="user-photo">
+                <div class="user-details">
+                    <strong>Yash</strong>
+                    <span>yash@example.com</span>
+                </div>
+            </div>
+            <p class="perm-text">WABridge is requesting access to:</p>
+            <ul class="perm-list">
+                <li>Manage your business account</li>
+                <li>Manage your WhatsApp Business Account</li>
+                <li>Send and receive WhatsApp messages</li>
+                <li>Manage catalogs and products</li>
+            </ul>
+            <div class="auth-actions">
+                <button class="btn-cancel">Cancel</button>
+                <button class="btn-allow" onclick="completeLogin()">Allow Access</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="app" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="brand-mini">
+                    <span class="logo">WA</span>
+                </div>
+                <nav>
+                    <button id="nav-inbox" class="nav-item active" onclick="showView('inbox')">💬 Inbox</button>
+                    <button id="nav-catalog" class="nav-item" onclick="showView('catalog')">📦 Catalog</button>
+                    <button id="nav-settings" class="nav-item" onclick="showView('settings')">⚙️ Settings</button>
+                </nav>
+            </div>
+            <div class="profile-area">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=yash" class="profile-photo">
+                <div class="profile-info">
+                    <span class="p-name">Yash</span>
+                    <span class="p-status">Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <!-- Inbox View -->
+            <section id="view-inbox" class="view active">
+                <header>
+                    <h2>Inbox</h2>
+                    <div class="badge-status">Connected</div>
+                </header>
+                <div class="chat-container">
+                    <div class="chat-list">
+                        <div class="chat-item active">
+                            <div class="avatar">JS</div>
+                            <div class="chat-info">
+                                <strong>John Smith</strong>
+                                <p>Hi, I need assistance...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-window">
+                        <div class="messages" id="message-list">
+                            <div class="msg rec">Hi, I'd like to check your product availability.</div>
+                            <div class="msg sent">Hello! We'll be happy to help. Here is our current catalog item.</div>
+                        </div>
+                        <div class="input-bar">
+                            <button class="tool-btn" onclick="sendTemplate()">📋 Template</button>
+                            <input type="text" placeholder="Type a message..." id="msg-input">
+                            <button class="send-btn" onclick="sendMessage()">➤</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Catalog View -->
+            <section id="view-catalog" class="view">
+                <header>
+                    <h2>Product Catalog</h2>
+                    <button class="btn-sync" onclick="syncCatalog()">🔄 Sync from Meta</button>
+                </header>
+                <div class="product-grid" id="product-grid">
+                    <div class="catalog-empty">Click Sync to fetch your Meta Catalog</div>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="view-settings" class="view">
+                <header>
+                    <h2>Settings</h2>
+                </header>
+                <div class="settings-card">
+                    <h3>WhatsApp Business Account</h3>
+                    <div class="setting-row">
+                        <span>Connected Number:</span>
+                        <strong>+91 98765 43210</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span>Account ID:</span>
+                        <code>waba_8372645109</code>
+                    </div>
+                    <div class="setting-row">
+                        <span>Status:</span>
+                        <span class="status-verified">Verified</span>
+                    </div>
+                    <div class="setting-row">
+                        <span>Permission Status:</span>
+                        <span class="status-verified">Granted (business_management, catalogs)</span>
+                    </div>
+                    <button class="btn-secondary"
+                        style="margin-top: 1rem; background: transparent; border: 1px solid #4b5563; color: white; padding: 8px; border-radius: 4px; cursor: pointer;">Test
+                        Webhook Connection</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+2025-11-12 00:55:09❌ Failed to subscribe webhook for  .
+2025-11-18 17:28:08❌ Failed to subscribe webhook for  .
+2025-11-19 00:11:31❌ Failed to subscribe webhook for  .
+2025-11-19 00:41:27❌ Failed to subscribe webhook for  .
+2025-11-25 17:49:03❌ Failed to subscribe webhook for  .
+2025-12-05 05:26:48❌ Failed to subscribe webhook for  .
+2025-12-05 05:57:54❌ Failed to subscribe webhook for  .
+2025-12-08 02:44:18❌ Failed to subscribe webhook for  .
+2025-12-09 13:00:35❌ Failed to subscribe webhook for  .
+2025-12-12 08:35:45❌ Failed to subscribe webhook for  .
+2025-12-20 21:26:58❌ Failed to subscribe webhook for  .
+2026-01-03 09:52:17❌ Failed to subscribe webhook for  .

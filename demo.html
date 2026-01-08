@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WABridge - WhatsApp Business API Demo Dashboard">
+    <title>WABridge - Demo Dashboard | WhatsApp Business API</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="demo.css">
+</head>
+
+<body class="demo-body">
+    <!-- Demo Header -->
+    <header class="demo-header">
+        <div class="demo-header-content">
+            <a href="index.html" class="logo">
+                <span class="logo-text"><span class="logo-wa">WA</span><span class="logo-bridge">Bridge</span></span>
+            </a>
+            <div class="demo-title">
+                <h1>API Demo Dashboard</h1>
+                <span class="demo-badge">For App Review Verification</span>
+            </div>
+            <div class="demo-user" id="userProfile">
+                <div class="user-avatar">👤</div>
+                <div class="user-info">
+                    <span class="user-name">Loading...</span>
+                    <span class="user-email">Connecting...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Demo Content -->
+    <main class="demo-main">
+        <!-- Sidebar Navigation -->
+        <nav class="demo-sidebar">
+            <div class="sidebar-section">
+                <h3>API Features</h3>
+                <ul class="sidebar-menu">
+                    <li class="active" data-section="profile">
+                        <span class="menu-icon">👤</span>
+                        <span>Public Profile</span>
+                        <span class="menu-badge">public_profile</span>
+                    </li>
+                    <li data-section="business">
+                        <span class="menu-icon">🏢</span>
+                        <span>Business Management</span>
+                        <span class="menu-badge">business_management</span>
+                    </li>
+                    <li data-section="whatsapp">
+                        <span class="menu-icon">💬</span>
+                        <span>WhatsApp Business</span>
+                        <span class="menu-badge">whatsapp_business_management</span>
+                    </li>
+                    <li data-section="messaging">
+                        <span class="menu-icon">📨</span>
+                        <span>Messaging</span>
+                        <span class="menu-badge">whatsapp_business_messaging</span>
+                    </li>
+                    <li data-section="catalog">
+                        <span class="menu-icon">📦</span>
+                        <span>Catalog</span>
+                        <span class="menu-badge">catalog_management</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <ul class="sidebar-menu">
+                    <li data-action="refresh">
+                        <span class="menu-icon">🔄</span>
+                        <span>Refresh Data</span>
+                    </li>
+                    <li data-action="logs">
+                        <span class="menu-icon">📋</span>
+                        <span>View API Logs</span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="demo-content">
+            <!-- Public Profile Section -->
+            <section class="demo-section active" id="section-profile">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>👤 Public Profile</h2>
+                        <span class="api-badge">public_profile</span>
+                    </div>
+                    <p class="section-desc">Access basic public profile information of the logged-in user.</p>
+                </div>
+
+                <div class="demo-card profile-card">
+                    <div class="card-header">
+                        <h3>User Profile Information</h3>
+                        <button class="btn-icon" id="fetchProfile" title="Fetch Profile">🔄</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-display" id="profileDisplay">
+                            <div class="profile-avatar-large" id="profileAvatar">👤</div>
+                            <div class="profile-details">
+                                <div class="profile-item">
+                                    <label>User ID</label>
+                                    <span id="profileId">Click refresh to load</span>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Name</label>
+                                    <span id="profileName">-</span>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Email</label>
+                                    <span id="profileEmail">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="api-log">
+                        <div class="log-header">
+                            <span>API Request</span>
+                            <span class="log-method">GET</span>
+                        </div>
+                        <code>GET /me?fields=id,name,email</code>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Business Management Section -->
+            <section class="demo-section" id="section-business">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>🏢 Business Management</h2>
+                        <span class="api-badge">business_management</span>
+                    </div>
+                    <p class="section-desc">Manage business accounts and access business-level information.</p>
+                </div>
+
+                <div class="demo-cards-grid">
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Business Accounts</h3>
+                            <button class="btn-icon" id="fetchBusiness" title="Fetch Business">🔄</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="business-list" id="businessList">
+                                <div class="business-item">
+                                    <div class="business-icon">🏪</div>
+                                    <div class="business-info">
+                                        <strong id="businessName">WABridge Technologies</strong>
+                                        <span id="businessId">ID: Loading...</span>
+                                    </div>
+                                    <span class="status-badge active">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /me/businesses?fields=id,name,verification_status</code>
+                        </div>
+                    </div>
+
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Business Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Business Type</span>
+                                    <span class="detail-value" id="businessType">Technology Services</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Verification Status</span>
+                                    <span class="detail-value status-verified" id="verificationStatus">✓ Verified</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Country</span>
+                                    <span class="detail-value" id="businessCountry">🇮🇳 India</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Created</span>
+                                    <span class="detail-value" id="businessCreated">Jan 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WhatsApp Business Management Section -->
+            <section class="demo-section" id="section-whatsapp">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>💬 WhatsApp Business Management</h2>
+                        <span class="api-badge">whatsapp_business_management</span>
+                    </div>
+                    <p class="section-desc">Manage WhatsApp Business Accounts, phone numbers, and message templates.</p>
+                </div>
+
+                <div class="demo-cards-grid">
+                    <!-- WhatsApp Business Account -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>WhatsApp Business Account</h3>
+                            <button class="btn-icon" id="fetchWABA" title="Fetch WABA">🔄</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="waba-display">
+                                <div class="waba-icon">📱</div>
+                                <div class="waba-info">
+                                    <div class="waba-name" id="wabaName">WABridge WABA</div>
+                                    <div class="waba-id" id="wabaId">WABA ID: Loading...</div>
+                                    <div class="waba-status">
+                                        <span class="status-dot active"></span>
+                                        <span id="wabaStatus">Connected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /{business_id}/owned_whatsapp_business_accounts</code>
+                        </div>
+                    </div>
+
+                    <!-- Phone Numbers -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Phone Numbers</h3>
+                            <button class="btn-icon" id="fetchPhones" title="Fetch Phone Numbers">🔄</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="phone-list" id="phoneList">
+                                <div class="phone-item">
+                                    <div class="phone-icon">📞</div>
+                                    <div class="phone-info">
+                                        <strong id="phoneDisplay">+91 98765 43210</strong>
+                                        <span id="phoneQuality">Quality: <span class="quality-high">High</span></span>
+                                    </div>
+                                    <span class="status-badge verified">✓ Verified</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /{waba_id}/phone_numbers?fields=display_phone_number,quality_rating</code>
+                        </div>
+                    </div>
+
+                    <!-- Message Templates -->
+                    <div class="demo-card full-width">
+                        <div class="card-header">
+                            <h3>Message Templates</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-small btn-outline" id="createTemplate">+ Create Template</button>
+                                <button class="btn-icon" id="fetchTemplates" title="Fetch Templates">🔄</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="templates-table">
+                                <div class="table-header">
+                                    <span>Template Name</span>
+                                    <span>Category</span>
+                                    <span>Language</span>
+                                    <span>Status</span>
+                                    <span>Actions</span>
+                                </div>
+                                <div class="table-body" id="templatesList">
+                                    <div class="table-row">
+                                        <span class="template-name">welcome_message</span>
+                                        <span class="template-category">MARKETING</span>
+                                        <span>en</span>
+                                        <span class="status-badge approved">Approved</span>
+                                        <span class="row-actions">
+                                            <button class="btn-mini" title="View">👁</button>
+                                            <button class="btn-mini" title="Edit">✏️</button>
+                                        </span>
+                                    </div>
+                                    <div class="table-row">
+                                        <span class="template-name">order_confirmation</span>
+                                        <span class="template-category">UTILITY</span>
+                                        <span>en</span>
+                                        <span class="status-badge approved">Approved</span>
+                                        <span class="row-actions">
+                                            <button class="btn-mini" title="View">👁</button>
+                                            <button class="btn-mini" title="Edit">✏️</button>
+                                        </span>
+                                    </div>
+                                    <div class="table-row">
+                                        <span class="template-name">payment_reminder</span>
+                                        <span class="template-category">UTILITY</span>
+                                        <span>hi</span>
+                                        <span class="status-badge pending">Pending</span>
+                                        <span class="row-actions">
+                                            <button class="btn-mini" title="View">👁</button>
+                                            <button class="btn-mini" title="Edit">✏️</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /{waba_id}/message_templates?fields=name,category,language,status</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Messaging Section -->
+            <section class="demo-section" id="section-messaging">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>📨 WhatsApp Business Messaging</h2>
+                        <span class="api-badge">whatsapp_business_messaging</span>
+                    </div>
+                    <p class="section-desc">Send and receive messages through the WhatsApp Business API.</p>
+                </div>
+
+                <div class="demo-cards-grid messaging-grid">
+                    <!-- Send Message Panel -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Send Message</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="message-form" id="sendMessageForm">
+                                <div class="form-group">
+                                    <label>Recipient Phone Number</label>
+                                    <input type="tel" id="recipientPhone" placeholder="+91 98765 43210"
+                                        value="+91 98765 43210">
+                                </div>
+                                <div class="form-group">
+                                    <label>Message Type</label>
+                                    <select id="messageType">
+                                        <option value="template">Template Message</option>
+                                        <option value="text">Text Message (Session)</option>
+                                        <option value="media">Media Message</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="templateSelect">
+                                    <label>Select Template</label>
+                                    <select id="templateName">
+                                        <option value="welcome_message">welcome_message</option>
+                                        <option value="order_confirmation">order_confirmation</option>
+                                        <option value="payment_reminder">payment_reminder</option>
+                                    </select>
+                                </div>
+                                <div class="form-group hidden" id="textInput">
+                                    <label>Message Text</label>
+                                    <textarea id="messageText" placeholder="Enter your message..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full" id="sendMsgBtn">
+                                    <span class="btn-icon">📤</span> Send Message
+                                </button>
+                            </form>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method post">POST</span>
+                            </div>
+                            <code>POST /{phone_number_id}/messages</code>
+                        </div>
+                    </div>
+
+                    <!-- Message Preview / Chat -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Message Preview</h3>
+                            <span class="preview-status" id="previewStatus">Ready</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="chat-preview">
+                                <div class="chat-header-preview">
+                                    <div class="chat-avatar">🏢</div>
+                                    <div class="chat-info">
+                                        <strong>WABridge Business</strong>
+                                        <span class="online-status">Online</span>
+                                    </div>
+                                </div>
+                                <div class="chat-messages" id="chatMessages">
+                                    <div class="chat-date">Today</div>
+                                    <div class="message-bubble sent">
+                                        <div class="message-content">
+                                            <p>Hello! Welcome to WABridge. How can we help you today? 🎉</p>
+                                        </div>
+                                        <div class="message-meta">
+                                            <span class="message-time">10:30 AM</span>
+                                            <span class="message-status">✓✓</span>
+                                        </div>
+                                    </div>
+                                    <div class="message-bubble received">
+                                        <div class="message-content">
+                                            <p>Hi! I'd like to know more about your services.</p>
+                                        </div>
+                                        <div class="message-meta">
+                                            <span class="message-time">10:32 AM</span>
+                                        </div>
+                                    </div>
+                                    <div class="message-bubble sent template">
+                                        <div class="template-header">📋 Template: welcome_message</div>
+                                        <div class="message-content">
+                                            <p>Thanks for reaching out! Here's what we offer:</p>
+                                            <p>✅ Bulk Campaigns<br>✅ AI Chatbots<br>✅ CRM Integration</p>
+                                        </div>
+                                        <div class="message-meta">
+                                            <span class="message-time">10:33 AM</span>
+                                            <span class="message-status">✓✓</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messaging Stats -->
+                    <div class="demo-card full-width">
+                        <div class="card-header">
+                            <h3>Messaging Analytics</h3>
+                            <div class="time-filter">
+                                <button class="time-btn active">Today</button>
+                                <button class="time-btn">This Week</button>
+                                <button class="time-btn">This Month</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon sent">📤</div>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="statSent">1,247</span>
+                                        <span class="stat-label">Messages Sent</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon delivered">✓✓</div>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="statDelivered">1,215</span>
+                                        <span class="stat-label">Delivered</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon read">👁</div>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="statRead">987</span>
+                                        <span class="stat-label">Read</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon received">📥</div>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="statReceived">342</span>
+                                        <span class="stat-label">Received</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Catalog Management Section -->
+            <section class="demo-section" id="section-catalog">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>📦 Catalog Management</h2>
+                        <span class="api-badge">catalog_management</span>
+                    </div>
+                    <p class="section-desc">Manage product catalogs and sync inventory with WhatsApp Business.</p>
+                </div>
+
+                <div class="demo-cards-grid">
+                    <!-- Catalog Overview -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Catalogs</h3>
+                            <button class="btn-icon" id="fetchCatalogs" title="Fetch Catalogs">🔄</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="catalog-list" id="catalogList">
+                                <div class="catalog-item active">
+                                    <div class="catalog-icon">📚</div>
+                                    <div class="catalog-info">
+                                        <strong id="catalogName">Main Product Catalog</strong>
+                                        <span id="catalogId">ID: 123456789</span>
+                                        <span class="product-count" id="productCount">24 Products</span>
+                                    </div>
+                                    <span class="status-badge active">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /{business_id}/owned_product_catalogs</code>
+                        </div>
+                    </div>
+
+                    <!-- Catalog Actions -->
+                    <div class="demo-card">
+                        <div class="card-header">
+                            <h3>Catalog Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-buttons-grid">
+                                <button class="action-btn" id="syncCatalog">
+                                    <span class="action-icon">🔄</span>
+                                    <span>Sync Catalog</span>
+                                </button>
+                                <button class="action-btn" id="addProduct">
+                                    <span class="action-icon">➕</span>
+                                    <span>Add Product</span>
+                                </button>
+                                <button class="action-btn" id="bulkUpload">
+                                    <span class="action-icon">📤</span>
+                                    <span>Bulk Upload</span>
+                                </button>
+                                <button class="action-btn" id="exportCatalog">
+                                    <span class="action-icon">📥</span>
+                                    <span>Export</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="demo-card full-width">
+                        <div class="card-header">
+                            <h3>Products</h3>
+                            <div class="card-actions">
+                                <input type="text" class="search-input" placeholder="Search products..."
+                                    id="productSearch">
+                                <button class="btn btn-small btn-primary" id="addNewProduct">+ Add Product</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="products-grid" id="productsGrid">
+                                <div class="product-card">
+                                    <div class="product-image">📱</div>
+                                    <div class="product-info">
+                                        <h4>Premium Smartphone</h4>
+                                        <p class="product-sku">SKU: PHN-001</p>
+                                        <p class="product-price">₹24,999</p>
+                                        <span class="stock-badge in-stock">In Stock</span>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image">💻</div>
+                                    <div class="product-info">
+                                        <h4>Business Laptop</h4>
+                                        <p class="product-sku">SKU: LAP-002</p>
+                                        <p class="product-price">₹54,999</p>
+                                        <span class="stock-badge in-stock">In Stock</span>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image">🎧</div>
+                                    <div class="product-info">
+                                        <h4>Wireless Headphones</h4>
+                                        <p class="product-sku">SKU: AUD-003</p>
+                                        <p class="product-price">₹3,999</p>
+                                        <span class="stock-badge low-stock">Low Stock</span>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image">⌚</div>
+                                    <div class="product-info">
+                                        <h4>Smart Watch</h4>
+                                        <p class="product-sku">SKU: WCH-004</p>
+                                        <p class="product-price">₹12,999</p>
+                                        <span class="stock-badge in-stock">In Stock</span>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image">📷</div>
+                                    <div class="product-info">
+                                        <h4>Digital Camera</h4>
+                                        <p class="product-sku">SKU: CAM-005</p>
+                                        <p class="product-price">₹34,999</p>
+                                        <span class="stock-badge out-of-stock">Out of Stock</span>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-image">🔌</div>
+                                    <div class="product-info">
+                                        <h4>Power Bank</h4>
+                                        <p class="product-sku">SKU: PWR-006</p>
+                                        <p class="product-price">₹1,499</p>
+                                        <span class="stock-badge in-stock">In Stock</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="api-log">
+                            <div class="log-header">
+                                <span>API Request</span>
+                                <span class="log-method">GET</span>
+                            </div>
+                            <code>GET /{catalog_id}/products?fields=id,name,price,availability</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- API Logs Panel -->
+    <div class="logs-panel" id="logsPanel">
+        <div class="logs-header">
+            <h3>📋 API Activity Log</h3>
+            <button class="btn-icon" id="closeLogs">✕</button>
+        </div>
+        <div class="logs-content" id="logsContent">
+            <div class="log-entry success">
+                <span class="log-time">10:30:15</span>
+                <span class="log-method">GET</span>
+                <span class="log-endpoint">/me?fields=id,name,email</span>
+                <span class="log-status">200 OK</span>
+            </div>
+            <div class="log-entry success">
+                <span class="log-time">10:30:16</span>
+                <span class="log-method">GET</span>
+                <span class="log-endpoint">/me/businesses</span>
+                <span class="log-status">200 OK</span>
+            </div>
+            <div class="log-entry success">
+                <span class="log-time">10:30:17</span>
+                <span class="log-method">GET</span>
+                <span class="log-endpoint">/{waba_id}/phone_numbers</span>
+                <span class="log-status">200 OK</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message">Action completed successfully!</span>
+    </div>
+
+    <!-- Modal for Create Template -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="templateModal">
+            <div class="modal-header">
+                <h3>Create Message Template</h3>
+                <button class="btn-icon modal-close" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="createTemplateForm">
+                    <div class="form-group">
+                        <label>Template Name</label>
+                        <input type="text" id="newTemplateName" placeholder="e.g., order_update">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="newTemplateCategory">
+                            <option value="MARKETING">Marketing</option>
+                            <option value="UTILITY">Utility</option>
+                            <option value="AUTHENTICATION">Authentication</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="newTemplateLanguage">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="gu">Gujarati</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Header (Optional)</label>
+                        <input type="text" id="newTemplateHeader" placeholder="Header text or media">
+                    </div>
+                    <div class="form-group">
+                        <label>Body</label>
+                        <textarea id="newTemplateBody" placeholder="Template body with {{1}} variables..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Footer (Optional)</label>
+                        <input type="text" id="newTemplateFooter" placeholder="Footer text">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelTemplate">Cancel</button>
+                <button class="btn btn-primary" id="submitTemplate">Create Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal-overlay" id="productModalOverlay">
+        <div class="modal" id="productModal">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <button class="btn-icon modal-close" id="closeProductModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <input type="text" id="productName" placeholder="Product name">
+                        </div>
+                        <div class="form-group">
+                            <label>SKU</label>
+                            <input type="text" id="productSku" placeholder="SKU-001">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Price (₹)</label>
+                            <input type="number" id="productPrice" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock Quantity</label>
+                            <input type="number" id="productStock" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="productDescription" placeholder="Product description..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="productCategory">
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="home">Home & Living</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelProduct">Cancel</button>
+                <button class="btn btn-primary" id="submitProduct">Add Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="demo.js"></script>
+</body>
+
+</html>

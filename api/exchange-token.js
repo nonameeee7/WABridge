@@ -119,11 +119,17 @@ async function exchangeCodeForToken(code, redirectUri) {
         url += `&redirect_uri=${encodeURIComponent(redirectUri)}`;
     }
 
+    // Debug log (masking secret)
+    console.log('Exchanging code for token with redirect_uri:', redirectUri);
+    const debugUrl = url.replace(APP_SECRET, 'xxxx');
+    console.log('Exchange URL:', debugUrl);
+
     const response = await fetch(url);
     const data = await response.json();
 
     if (data.error) {
-        throw new Error(data.error.message);
+        console.error('Meta API Error:', data.error);
+        throw new Error(data.error.message || 'Failed to exchange code');
     }
 
     return data.access_token;
