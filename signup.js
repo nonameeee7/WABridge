@@ -96,9 +96,8 @@ function exchangeCodeForToken(code) {
     $.ajax({
         type: 'POST',
         url: CONFIG.TOKEN_EXCHANGE_URL,
-        data: {
-            code: code
-        },
+        contentType: 'application/json',
+        data: JSON.stringify({ code: code }),
         dataType: 'json',
         success: function (response) {
             console.log('Token exchange response:', response);
@@ -129,9 +128,21 @@ function exchangeCodeForToken(code) {
             showSuccessView();
         },
         error: function (xhr, status, error) {
-            console.error('Token exchange error:', error);
+            console.error('Token exchange error:', xhr.responseText);
             hideLoader();
-            showStatus('error', 'Failed to exchange token: ' + error);
+
+            // Try to parse error response
+            let errorMsg = 'Failed to exchange token';
+            try {
+                const resp = JSON.parse(xhr.responseText);
+                if (resp.error) {
+                    errorMsg = resp.error;
+                }
+            } catch (e) {
+                errorMsg = error || 'Unknown error';
+            }
+
+            showStatus('error', errorMsg);
         }
     });
 }
