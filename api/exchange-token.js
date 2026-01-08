@@ -33,8 +33,18 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Get the code from request
-        const code = req.body?.code || req.query?.code;
+        // Get the code from request (handle both JSON body and form-urlencoded)
+        let code = null;
+
+        if (req.body) {
+            // Handle JSON body or form-urlencoded
+            code = typeof req.body === 'string' ? JSON.parse(req.body).code : req.body.code;
+        }
+
+        // Also check query params
+        if (!code && req.query) {
+            code = req.query.code;
+        }
 
         if (!code) {
             return res.status(400).json({ error: 'Missing authorization code' });
