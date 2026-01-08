@@ -97,7 +97,10 @@ function exchangeCodeForToken(code) {
         type: 'POST',
         url: CONFIG.TOKEN_EXCHANGE_URL,
         contentType: 'application/json',
-        data: JSON.stringify({ code: code }),
+        data: JSON.stringify({
+            code: code,
+            redirect_uri: window.location.origin + '/'
+        }),
         dataType: 'json',
         success: function (response) {
             console.log('Token exchange response:', response);

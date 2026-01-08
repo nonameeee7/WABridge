@@ -33,17 +33,26 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Get the code from request (handle both JSON body and form-urlencoded)
+        // Get the code and redirect_uri from request
         let code = null;
+        let redirectUri = null;
 
         if (req.body) {
             // Handle JSON body or form-urlencoded
-            code = typeof req.body === 'string' ? JSON.parse(req.body).code : req.body.code;
+            if (typeof req.body === 'string') {
+                const parsed = JSON.parse(req.body);
+                code = parsed.code;
+                redirectUri = parsed.redirect_uri;
+            } else {
+                code = req.body.code;
+                redirectUri = req.body.redirect_uri;
+            }
         }
 
         // Also check query params
         if (!code && req.query) {
             code = req.query.code;
+            redirectUri = req.query.redirect_uri;
         }
 
         if (!code) {
@@ -58,7 +67,7 @@ export default async function handler(req, res) {
         }
 
         // Step 1: Exchange code for short-lived access token
-        const shortLivedToken = await exchangeCodeForToken(code);
+        const shortLivedToken = await exchangeCodeForToken(code, redirectUri);
         if (!shortLivedToken) {
             return res.status(400).json({ error: 'Failed to exchange code for access token' });
         }
@@ -101,9 +110,14 @@ export default async function handler(req, res) {
 // HELPER FUNCTIONS
 // ============================================
 
-async function exchangeCodeForToken(code) {
-    // Exchange code for access token (no redirect_uri needed with FB.login JS SDK)
-    const url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}`;
+async function exchangeCodeForToken(code, redirectUri) {
+    // Build URL with optional redirect_uri
+    let url = `${API_URL}/oauth/access_token?client_id=${APP_ID}&client_secret=${APP_SECRET}&code=${encodeURIComponent(code)}`;
+
+    // Add redirect_uri if provided
+    if (redirectUri) {
+        url += `&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    }
 
     const response = await fetch(url);
     const data = await response.json();
