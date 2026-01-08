@@ -51,9 +51,6 @@ export default async function handler(req, res) {
             code = req.query.code;
         }
 
-        // We MUST use the one configured in Meta App Settings, regardless of what the client sent
-        let redirectUri = 'https://wabridge.vercel.app/';
-
         if (!code) {
             return res.status(400).json({ error: 'Missing authorization code' });
         }
@@ -66,7 +63,8 @@ export default async function handler(req, res) {
         }
 
         // Step 1: Exchange code for short-lived access token
-        const shortLivedToken = await exchangeCodeForToken(code, redirectUri);
+        // NOTE: For FB.login SDK flow, do NOT pass redirect_uri
+        const shortLivedToken = await exchangeCodeForToken(code);
         if (!shortLivedToken) {
             return res.status(400).json({ error: 'Failed to exchange code for access token' });
         }

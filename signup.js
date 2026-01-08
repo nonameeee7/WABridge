@@ -39,7 +39,7 @@ $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
 });
 
 // ============================================
-// CONNECT BUTTON HANDLER (MANUAL FLOW)
+// CONNECT BUTTON HANDLER (FB.LOGIN SDK FLOW)
 // ============================================
 $('#connect-btn').on('click', function (e) {
     e.preventDefault();
@@ -48,52 +48,44 @@ $('#connect-btn').on('click', function (e) {
     showLoader();
     hideStatus();
 
-    // Construct the Manual OAuth URL
-    // We MUST use the one configured in Meta App Settings
-    const redirectUri = 'https://wabridge.vercel.app/';
-    const scope = 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management';
+    // Use FB.login with the Embedded Signup configuration
+    // This triggers the full WhatsApp onboarding wizard (Business selection, Phone number, etc.)
+    FB.login(function (response) {
+        console.log('FB.login response:', response);
 
-    // The 'extras' parameter is CRITICAL to trigger the WhatsApp Onboarding flow (Business/Phone selection)
-    // instead of just a generic login.
-    const extras = JSON.stringify({
-        setup: {},
-        featureType: 'whatsapp_business_app_onboarding',
-        sessionInfoVersion: '3'
+        if (response.authResponse) {
+            const code = response.authResponse.code;
+
+            if (code) {
+                // Exchange code for access token via backend
+                exchangeCodeForToken(code);
+            } else if (response.authResponse.accessToken) {
+                // Got access token directly (unlikely with response_type: code)
+                handleDirectToken(response.authResponse.accessToken);
+            } else {
+                hideLoader();
+                showStatus('error', 'No authorization code received');
+            }
+        } else {
+            hideLoader();
+
+            if (response.error) {
+                showStatus('error', 'Login failed: ' + response.error.message);
+            } else {
+                showStatus('error', 'Login was cancelled');
+            }
+        }
+    }, {
+        config_id: CONFIG.CONFIG_ID,
+        response_type: 'code',
+        override_default_response_type: true,
+        scope: 'public_profile,business_management,whatsapp_business_management,whatsapp_business_messaging,catalog_management',
+        extras: {
+            setup: {},
+            featureType: 'whatsapp_business_app_onboarding',
+            sessionInfoVersion: '3'
+        }
     });
-
-    const authUrl = `https://www.facebook.com/${CONFIG.API_VERSION}/dialog/oauth?` +
-        `client_id=${CONFIG.APP_ID}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&response_type=code` +
-        `&config_id=${CONFIG.CONFIG_ID}` +
-        `&scope=${scope}` +
-        `&extras=${encodeURIComponent(extras)}` + // Added extras param
-        `&state=signup_init`;
-
-    console.log('Redirecting to Facebook OAuth:', authUrl);
-
-    // Redirect the current window to Facebook
-    window.location.href = authUrl;
-});
-
-// Check for Authorization Code on Page Load
-$(document).ready(function () {
-    // Check if we have 'code' in the URL query params
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const error = urlParams.get('error');
-
-    if (code) {
-        console.log('Authorization code found:', code);
-        // Exchange code for token
-        exchangeCodeForToken(code);
-
-        // Clean up URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (error) {
-        const errorMsg = urlParams.get('error_message') || 'Login failed';
-        showStatus('error', errorMsg);
-    }
 });
 
 // ============================================
@@ -102,16 +94,13 @@ $(document).ready(function () {
 function exchangeCodeForToken(code) {
     showStatus('loading', 'Exchanging authorization code...');
 
-    // Use exactly the same redirect_uri as in the OAuth request
-    const redirectUri = 'https://wabridge.vercel.app/';
-
     $.ajax({
         type: 'POST',
         url: CONFIG.TOKEN_EXCHANGE_URL,
         contentType: 'application/json',
         data: JSON.stringify({
-            code: code,
-            redirect_uri: redirectUri
+            code: code
+            // NOTE: No redirect_uri for FB.login SDK flow
         }),
         dataType: 'json',
         success: function (response) {
@@ -126,16 +115,19 @@ function exchangeCodeForToken(code) {
             // Store credentials
             credentials.accessToken = response.access_token;
             credentials.wabaId = response.whatsapp_business_account_id;
-            credentials.phoneNumberId = response.phone_number_id;
-            credentials.phoneNumber = response.formatted_phone_number;
 
-            // Send data to parent window
+            // Handle phone numbers array
+            if (response.phone_numbers && response.phone_numbers.length > 0) {
+                credentials.phoneNumberId = response.phone_numbers[0].id;
+                credentials.phoneNumber = response.phone_numbers[0].formatted_phone_number || response.phone_numbers[0].display_phone_number;
+            }
+
+            // Send data to parent window (with full phone_numbers array for selection)
             sendDataToParent({
                 appId: CONFIG.APP_ID,
                 accessToken: credentials.accessToken,
                 whatsappBusinessAccountId: credentials.wabaId,
-                phoneNumberId: credentials.phoneNumberId,
-                formattedPhoneNumber: credentials.phoneNumber
+                phoneNumbers: response.phone_numbers || []
             });
 
             // Show success view
