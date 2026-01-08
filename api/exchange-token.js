@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         }
 
         // We MUST use the one configured in Meta App Settings, regardless of what the client sent
-        redirectUri = 'https://wabridge.vercel.app/';
+        let redirectUri = 'https://wabridge.vercel.app/';
 
         if (!code) {
             return res.status(400).json({ error: 'Missing authorization code' });
