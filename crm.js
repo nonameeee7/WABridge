@@ -931,30 +931,52 @@ function showPhoneNumberSelectionModal(phoneNumbers) {
         modal = document.createElement('div');
         modal.id = 'phone-selection-modal';
         modal.className = 'modal';
+        // Ensure it sits on top of everything
+        modal.style.zIndex = '10001';
         document.body.appendChild(modal);
     }
 
     window.tempPhoneNumbers = phoneNumbers;
 
+    // Create the list items with a cleaner look
     const listHtml = phoneNumbers.map((p, index) => `
-        <div onclick="selectPhoneNumber(${index})" 
-             style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: background 0.2s;">
-            <div style="font-weight: bold; color: var(--text-primary);">${p.display_phone_number}</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">ID: ${p.id}</div>
+        <div onclick="selectPhoneNumber(${index})" class="phone-option" 
+             style="display: flex; align-items: center; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; background: #fff;">
+            <div style="font-size: 24px; margin-right: 15px;">📱</div>
+            <div style="flex-grow: 1;">
+                <div style="font-weight: 600; color: #333; font-size: 1.1rem;">${p.display_phone_number}</div>
+                <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">ID: ${p.id}</div>
+            </div>
+            <div style="color: #25D366; font-weight: bold;">Connect &rarr;</div>
         </div>
     `).join('');
 
+    // Update Modal Content
     modal.innerHTML = `
-        <div class="modal-header">
-            <h2>Select WhatsApp Number</h2>
+        <div class="modal-dialog" style="max-width: 500px; margin: 10vh auto; background: #fff; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); overflow: hidden;">
+            <div class="modal-header" style="background: #008069; padding: 20px; color: white;">
+                <h2 style="margin: 0; font-size: 1.5rem;">Select WhatsApp Number</h2>
+            </div>
+            <div class="modal-body" style="padding: 25px; max-height: 60vh; overflow-y: auto; background: #f9f9f9;">
+                <p style="margin-bottom: 20px; color: #555; text-align: center;">We found multiple numbers associated with your account. Please select the one you wish to connect.</p>
+                ${listHtml}
+            </div>
+             <div class="modal-footer" style="padding: 15px; text-align: right; background: #fff; border-top: 1px solid #eee;">
+                <button onclick="document.getElementById('phone-selection-modal').remove()" style="padding: 8px 16px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer;">Cancel</button>
+            </div>
         </div>
-        <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
-            <p style="margin-bottom: 15px; color: var(--text-secondary);">Multiple numbers found. Select one to connect:</p>
-            ${listHtml}
-        </div>
+        <style>
+            .phone-option:hover {
+                border-color: #25D366 !important;
+                background-color: #f0fdf4 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            }
+        </style>
     `;
 
     modal.classList.remove('hidden');
+    modal.style.display = 'block'; // Ensure visibility
 }
 
 function selectPhoneNumber(index) {
