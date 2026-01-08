@@ -9,7 +9,7 @@
 // CONFIGURATION
 // ============================================
 const APP_ID = '2704195743293039';
-const APP_SECRET = process.env.FB_APP_SECRET || '494585bd885e60111e50ce31dcf2ba7a';
+const APP_SECRET = process.env.FB_APP_SECRET; // Set in Vercel Environment Variables
 const API_VERSION = 'v20.0';
 const API_URL = `https://graph.facebook.com/${API_VERSION}`;
 
@@ -38,6 +38,13 @@ export default async function handler(req, res) {
 
         if (!code) {
             return res.status(400).json({ error: 'Missing authorization code' });
+        }
+
+        // Check if app secret is configured
+        if (!APP_SECRET) {
+            return res.status(500).json({
+                error: 'FB_APP_SECRET environment variable not set in Vercel'
+            });
         }
 
         // Step 1: Exchange code for short-lived access token
